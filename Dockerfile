@@ -3,7 +3,8 @@ FROM nilleb/openjdk-for-windows
 MAINTAINER Jeremy White <sail.madeline@gmail.com>
 
 ENV SONAR_CPPVERSION 0.9.7
-ENV SONAR_VERSION 6.2 
+ENV SONAR_VERSION 6.2
+ 
 ENV	SONARQUBE_HOME c:\\sonarqube 
     # Database configuration
     # Defaults to using H2
@@ -22,9 +23,9 @@ RUN powershell  move sonarqube-%SONAR_VERSION% sonarqube && del sonarqube.zip \
 	
 	# install C++ plugin
 RUN powershell Invoke-WebRequest -outfile sonar-cxx.jar -uri https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-%SONAR_CPPVERSION%/sonar-cxx-plugin-%SONAR_CPPVERSION%.jar
-RUN powershell mv sonar-cxx.jar c:/sonarqube/extensions/plugins
+RUN powershell mkdir sonarqube/extensions/downloads
+RUN powershell cp sonar-cxx.jar sonarqube/extensions/downloads/sonar-cxx.jar
 
-VOLUME ${SONARQUBE_HOME}/data
 
 WORKDIR C:/sonarqube
 COPY run.cmd C:/sonarqube/bin/
