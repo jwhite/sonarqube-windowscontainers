@@ -2,8 +2,8 @@ FROM nilleb/openjdk-for-windows
 
 MAINTAINER Jeremy White <sail.madeline@gmail.com>
 
-ENV SONAR_CPPVERSION 0.9.7
-ENV SONAR_VERSION 6.2
+ENV SONAR_CPPVERSION 0.9.8
+ENV SONAR_VERSION 6.6
  
 ENV	SONARQUBE_HOME c:\\sonarqube 
     # Database configuration
@@ -22,7 +22,8 @@ RUN powershell  move sonarqube-%SONAR_VERSION% sonarqube && del sonarqube.zip \
     && for /d %x in (%SONARQUBE_HOME%\\bin\\*) do @rd /s /q "%x" 
 	
 	# install C++ plugin
-RUN powershell Invoke-WebRequest -outfile sonar-cxx.jar -uri https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-%SONAR_CPPVERSION%/sonar-cxx-plugin-%SONAR_CPPVERSION%.jar
+#RUN powershell Invoke-WebRequest -outfile sonar-cxx.jar -uri https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-%SONAR_CPPVERSION%/sonar-cxx-plugin-%SONAR_CPPVERSION%.jar
+RUN powershell Invoke-WebRequest -outfile sonar-cxx.jar -uri "https://ci.appveyor.com/api/buildjobs/qr62en5r8a5t4uqk/artifacts/sonar-cxx-plugin%2Ftarget%2Fsonar-cxx-plugin-%SONAR_CPPVERSION%-SNAPSHOT.jar"
 RUN powershell mkdir sonarqube/extensions/downloads
 RUN powershell cp sonar-cxx.jar sonarqube/extensions/downloads/sonar-cxx.jar
 
