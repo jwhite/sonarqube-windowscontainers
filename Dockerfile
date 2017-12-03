@@ -3,7 +3,7 @@ FROM nilleb/openjdk-for-windows
 MAINTAINER Jeremy White <sail.madeline@gmail.com>
 
 ENV SONAR_CPPVERSION 0.9.8
-ENV SONAR_VERSION 6.6
+ENV SONAR_VERSION 6.7
  
 ENV	SONARQUBE_HOME c:\\sonarqube 
     # Database configuration
@@ -11,6 +11,9 @@ ENV	SONARQUBE_HOME c:\\sonarqube
 ENV SONARQUBE_JDBC_USERNAME sonar 
 ENV SONARQUBE_JDBC_PASSWORD sonar 
 ENV SONARQUBE_JDBC_URL http://foo.com
+ENV SONAR_SCANNER_OPTS="-Xmx4096m -Xms512m"
+ENV SONARQUBE_CE_OPTS="-Xmx4096m -Xms512m -XX:+HeapDumpOnOutOfMemoryError"
+ENV SONARQUBE_WEB_JVM_OPTS="-Xmx4096m -Xms512m -XX:+HeapDumpOnOutOfMemoryError"
 
 # Http port
 EXPOSE 9000
@@ -22,12 +25,12 @@ RUN powershell  move sonarqube-%SONAR_VERSION% sonarqube && del sonarqube.zip \
     && for /d %x in (%SONARQUBE_HOME%\\bin\\*) do @rd /s /q "%x" 
 	
 	# install C++ plugin
-#RUN powershell Invoke-WebRequest -outfile sonar-cxx.jar -uri https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-%SONAR_CPPVERSION%/sonar-cxx-plugin-%SONAR_CPPVERSION%.jar
+RUN powershell Invoke-WebRequest -outfile c:\sonarqube\extensions\plugins\sonar-cxx-plugin-%SONAR_CPPVERSION%.jar -uri https://github.com/SonarOpenCommunity/sonar-cxx/releases/download/cxx-%SONAR_CPPVERSION%/sonar-cxx-plugin-%SONAR_CPPVERSION%.jar
+RUN powershell Invoke-WebRequest -outfile c:\sonarqube\extensions\plugins\sonar-flex-plugin-2.3.jar -uri https://sonarsource.bintray.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.3.jar
 
-RUN powershell Invoke-WebRequest -outfile c:\sonarqube\extensions\plugin\sonar-flex-plugin-2.3.jar -uri https://sonarsource.bintray.com/Distribution/sonar-flex-plugin/sonar-flex-plugin-2.3.jar
-RUN powershell Invoke-WebRequest -outfile sonar-cxx.jar -uri "https://ci.appveyor.com/api/buildjobs/qr62en5r8a5t4uqk/artifacts/sonar-cxx-plugin%2Ftarget%2Fsonar-cxx-plugin-%SONAR_CPPVERSION%-SNAPSHOT.jar"
-RUN powershell mkdir sonarqube/extensions/downloads
-RUN powershell cp sonar-cxx.jar sonarqube/extensions/downloads/sonar-cxx.jar
+#RUN powershell Invoke-WebRequest -outfile sonar-cxx.jar -uri "https://ci.appveyor.com/api/buildjobs/qr62en5r8a5t4uqk/artifacts/sonar-cxx-plugin%2Ftarget%2Fsonar-cxx-plugin-%SONAR_CPPVERSION%-SNAPSHOT.jar"
+#RUN powershell mkdir sonarqube/extensions/downloads
+#RUN powershell cp sonar-cxx.jar sonarqube/extensions/plugins/sonar-cxx.jar
 
 
 WORKDIR C:/sonarqube
